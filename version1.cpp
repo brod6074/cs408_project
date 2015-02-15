@@ -26,6 +26,7 @@ struct Block {
 bool setExists(Set *set, int value);
 void setAdd(Set *set, int value);
 bool setEqual(Set *set1, Set *set2);
+void setClear(Set *set);
 
 void initializeBlocks(Block blocks[]);
 
@@ -35,16 +36,10 @@ int main() {
 	Set set1, set2;
 	set1.head = set1.tail = NULL;
 	set1.size = 0;
-	set2.head = set2.tail = NULL;
-	set2.size = 0;
-	
-	setAdd(&set1, 1);
-	//setAdd(&set2, 2);
 
-	if (setEqual(&set1, &set2))
-		cout << "The sets are equal" << endl;
-	else
-		cout << "The sets are not equal" << endl;
+	setAdd(&set1, 1);
+	setAdd(&set1, 3);
+	setClear(&set1);
 
 	//initializeBlocks(blocks);
 
@@ -148,4 +143,18 @@ bool setEqual(Set *set1, Set *set2) {
 	}
 
 	return true;
+}
+
+// Clears contents of set
+void setClear(Set *set) {
+	if (set->size == 0)
+		return;
+
+	for (Node *iter = set->head; iter != NULL; iter = set->head) {
+		set->head = set->head->next;
+		delete iter;
+	}
+
+	set->head = set->tail = NULL;
+	set->size = 0;
 }
