@@ -2,53 +2,67 @@
 using namespace std;
 
 static const int SET_MAX = 6;
-static const int EMPTY = 0;
 
-void setInitialize(int set[][SET_MAX], int initVal);
-void setUnion(int set1[], int set2[]);
-void setDifference(int set1[], int set2[]);
-bool isEmptySet(int set[]);
+struct Node {
+	int val;
+	Node *next;
+};
+
+struct Set {
+	int size;
+	Node *head;
+	Node *tail;
+};
+
+struct Block {
+	Set in;
+	Set out;
+	Set def;
+	Set use;
+	Set successor;
+};
+
+// Set functions
+bool setExists(Set *set, int value);
+void setAdd(Set *set, int value);
 
 int main() {
 
-	int in[SET_MAX][SET_MAX];
-	int out[SET_MAX][SET_MAX];
-	int def[SET_MAX][SET_MAX];
-	int use[SET_MAX][SET_MAX];
-	int successor[SET_MAX][SET_MAX];
-	int old[SET_MAX][SET_MAX];
-
-	setInitialize(in, EMPTY);
-	setInitialize(out, EMPTY);
-	setInitialize(def, EMPTY);
-	setInitialize(use, EMPTY);
-	setInitialize(successor, EMPTY);
-	setInitialize(old, EMPTY);
-
-	bool change = true;
-	while (change) {
-		change = false;
-
-		for (int i = 0; i < SET_MAX; i++) {
-			// OLD = in [B]
-
-			//out[B] =
-			// for each successor P of B
-			//   U in[P]
-
-			// in[B] = use[B] U (out[B] - def[B])
-
-			// if (in[B] != OLD)
-			//		change = true;
-		}
-	}
+	Set set;
+	set.head = set.tail = NULL;
+	set.size = 0;
+	setAdd(&set, 1);
+	setAdd(&set, 2);
+	setAdd(&set, 1);
+	setAdd(&set, 3);
 
 	return 0;
 }
 
-void setInitialize(int set[][SET_MAX], int initVal) {
-	int *baseAddr = &set[0][0];
+bool setExists(Set *set, int value) {
+	for (Node *iter = set->head; iter != NULL; iter = iter->next) {
+		if (value == iter->val)
+			return true;
+	}
 
-	for (int i = 0; i < SET_MAX * SET_MAX; i++)
-		*(baseAddr + i) = initVal;
+	return false;
+}
+
+void setAdd(Set *set, int value) {
+	// return if value already exists in the set
+	if (setExists(set, value))
+		return;
+
+	Node *newNode = new Node();
+	newNode->val = value;
+	newNode->next = NULL;
+
+	if (set->size == 0) {
+		set->head = set->tail = newNode;
+	} else {
+		set->tail->next = newNode;
+		set->tail = newNode;
+	}
+
+	set->size++;
 }
