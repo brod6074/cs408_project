@@ -25,14 +25,28 @@ struct Block {
 // Set functions
 bool setExists(Set *set, int value);
 void setAdd(Set *set, int value);
+bool setEqual(Set *set1, Set *set2);
 
 void initializeBlocks(Block blocks[]);
 
 int main() {
 
-	Block blocks[SET_MAX];
+	//Block blocks[SET_MAX];
+	Set set1, set2;
+	set1.head = set1.tail = NULL;
+	set1.size = 0;
+	set2.head = set2.tail = NULL;
+	set2.size = 0;
+	
+	setAdd(&set1, 1);
+	//setAdd(&set2, 2);
 
-	initializeBlocks(blocks);
+	if (setEqual(&set1, &set2))
+		cout << "The sets are equal" << endl;
+	else
+		cout << "The sets are not equal" << endl;
+
+	//initializeBlocks(blocks);
 
 	return 0;
 }
@@ -89,6 +103,7 @@ void initializeBlocks(Block blocks[]) {
 	setAdd(&blocks[5].def, (int) 'a');
 }
 
+// Returns true is value exists in the set. False otherwise
 bool setExists(Set *set, int value) {
 	for (Node *iter = set->head; iter != NULL; iter = iter->next) {
 		if (value == iter->val)
@@ -98,6 +113,7 @@ bool setExists(Set *set, int value) {
 	return false;
 }
 
+// Add value to the set
 void setAdd(Set *set, int value) {
 	// return if value already exists in the set
 	if (setExists(set, value))
@@ -115,4 +131,21 @@ void setAdd(Set *set, int value) {
 	}
 
 	set->size++;
+}
+
+// Returns true if the sets are equal. Returns false otherwise
+bool setEqual(Set *set1, Set *set2) {
+	if (set1->size != set2->size)
+		return false;
+
+	Node *iter1 = set1->head;
+	Node *iter2 = set2->head;
+	while ((iter1 != NULL) && (iter2 != NULL)) {
+		if (iter1->val != iter2->val)
+			return false;
+		iter1 = iter1->next;
+		iter2 = iter2->next;
+	}
+
+	return true;
 }
