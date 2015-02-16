@@ -1,3 +1,11 @@
+// Programmer:	Roberto Rodriguez
+// Assignment:	Individual Project
+// Class:		CS 408, W15
+//
+// VERSION 1
+// Uses structs but does not provide encapsulation. Sets are implemented with linked lists
+// using the Node and Set structs.
+
 #include <iostream>
 using namespace std;
 
@@ -14,98 +22,86 @@ struct Set {
 	Node *tail;
 };
 
-struct Block {
-	Set in;
-	Set out;
-	Set def;
-	Set use;
-	Set successor;
-};
-
 // Set functions
-bool setExists(Set *set, int value);
 void setAdd(Set *set, int value);
-bool setEqual(Set *set1, Set *set2);
 void setClear(Set *set);
+void setInit(Set *set);
+bool setEqual(Set *set1, Set *set2);
+bool setExists(Set *set, int value);
+void setPrint(Set *set);
 
-void initializeBlocks(Block blocks[]);
+void initializeSets(Set in[], Set out[], Set def[], Set use[], Set successor[]);
 
 int main() {
+	Set in[SET_MAX];
+	Set out[SET_MAX];
+	Set def[SET_MAX];
+	Set use[SET_MAX];
+	Set successor[SET_MAX];
 
-	//Block blocks[SET_MAX];
-	Set set1, set2;
-	set1.head = set1.tail = NULL;
-	set1.size = 0;
+	initializeSets(in, out, def, use, successor);
 
-	setAdd(&set1, 1);
-	setAdd(&set1, 3);
-	setClear(&set1);
+	bool change = true; 
+	while (change) {
+		change = false;
+		
+		for (int b = 0; b < SET_MAX; b++) {
+			cout << "\nSET " << (b + 1) << " IN (before): ";
+			setPrint(&in[b]);
+			cout << "\nSET " << (b + 1) << " OUT (before): ";
+			setPrint(&out[b]);
 
-	//initializeBlocks(blocks);
+			// old = in[b]
+			Set old;
+			setInit(&old);
+			for (Node *iter = in[b].head; iter != nullptr; iter = iter->next)
+				setAdd(&old, iter->val);
 
+			// out[b] = U in[p] for each successor p of b
+			for (Node *succIter = successor[b].head; succIter != nullptr; succIter = succIter->next) {
+				int p = succIter->val;
+				for (Node *inIter = in[p].head; inIter != nullptr; inIter = inIter->next) {
+					setAdd(&out[b], inIter->val);
+				}
+			}
+
+			// in[b] = use[b] U (out[b] - def[b])
+			setClear(&in[b]);
+			for (Node *iter = use[b].head; iter != nullptr; iter = iter->next)
+				setAdd(&in[b], iter->val);
+
+			for (Node *iter = out[b].head; iter != nullptr; iter = iter->next) {
+				if (!setExists(&def[b], iter->val))
+					setAdd(&in[b], iter->val);
+			}
+
+
+			// if (in[b] != old)
+			//		change = true
+			if (!setEqual(&in[b], &old))
+				change = true;
+
+			setClear(&old);
+
+			cout << "\nSET " << (b + 1) << " IN (after): ";
+			setPrint(&in[b]);
+			cout << "\nSET " << (b + 1) << " OUT (after): ";
+			setPrint(&out[b]);
+		}
+		cout << "\n=======================================";
+	}
+
+	// Deallocate memory before exiting
+	for (int b = 0; b < SET_MAX; b++) {
+		setClear(&in[b]);
+		setClear(&out[b]);
+		setClear(&def[b]);
+		setClear(&use[b]);
+		setClear(&successor[b]);
+	}
+
+	cout << endl;
 	return 0;
-}
-
-void initializeBlocks(Block blocks[]) {
-
-	for (int i = 0; i < SET_MAX; i++) {
-		blocks[i].in.head = blocks[i].in.tail = NULL;
-		blocks[i].in.size = 0;
-		blocks[i].out.head = blocks[i].out.tail = NULL;
-		blocks[i].out.size = 0;
-		blocks[i].def.head = blocks[i].def.tail = NULL;
-		blocks[i].def.size = 0;
-		blocks[i].use.head = blocks[i].use.tail = NULL;
-		blocks[i].use.size = 0;
-		blocks[i].successor.head = blocks[i].successor.tail = NULL;
-		blocks[i].successor.size = 0;
-	}
-
-	// BLOCK B1
-	setAdd(&blocks[0].def, (int) 'a');
-	setAdd(&blocks[0].def, (int) 'b');
-	setAdd(&blocks[0].successor, (int) 1);
-
-	// BLOCK B2
-	setAdd(&blocks[1].use, (int) 'a');
-	setAdd(&blocks[1].use, (int) 'b');
-	setAdd(&blocks[1].def, (int) 'c');
-	setAdd(&blocks[1].def, (int) 'd');
-	setAdd(&blocks[1].successor, (int) 2);
-	setAdd(&blocks[1].successor, (int) 4);
-
-	// BLOCK B3
-	setAdd(&blocks[2].use, (int) 'b');
-	setAdd(&blocks[2].successor, (int) 3);
-	setAdd(&blocks[2].successor, (int) 4);
-
-	// BLOCK B4
-	setAdd(&blocks[3].use, (int) 'a');
-	setAdd(&blocks[3].use, (int) 'b');
-	setAdd(&blocks[3].def, (int) 'd');
-	setAdd(&blocks[3].successor, (int) 2);
-
-	// BLOCK B5
-	setAdd(&blocks[4].use, (int) 'a');
-	setAdd(&blocks[4].use, (int) 'c');
-	setAdd(&blocks[4].def, (int) 'e');
-	setAdd(&blocks[4].successor, (int) 1);
-	setAdd(&blocks[4].successor, (int) 5);
-
-	// BLOCK B6
-	setAdd(&blocks[5].use, (int) 'b');
-	setAdd(&blocks[5].use, (int) 'd');
-	setAdd(&blocks[5].def, (int) 'a');
-}
-
-// Returns true is value exists in the set. False otherwise
-bool setExists(Set *set, int value) {
-	for (Node *iter = set->head; iter != NULL; iter = iter->next) {
-		if (value == iter->val)
-			return true;
-	}
-
-	return false;
 }
 
 // Add value to the set
@@ -116,7 +112,7 @@ void setAdd(Set *set, int value) {
 
 	Node *newNode = new Node();
 	newNode->val = value;
-	newNode->next = NULL;
+	newNode->next = nullptr;
 
 	if (set->size == 0) {
 		set->head = set->tail = newNode;
@@ -128,6 +124,20 @@ void setAdd(Set *set, int value) {
 	set->size++;
 }
 
+// Clears contents of set
+void setClear(Set *set) {
+	if (set->size == 0)
+		return;
+
+	for (Node *iter = set->head; iter != nullptr; iter = set->head) {
+		set->head = set->head->next;
+		delete iter;
+	}
+
+	set->head = set->tail = nullptr;
+	set->size = 0;
+}
+
 // Returns true if the sets are equal. Returns false otherwise
 bool setEqual(Set *set1, Set *set2) {
 	if (set1->size != set2->size)
@@ -135,7 +145,7 @@ bool setEqual(Set *set1, Set *set2) {
 
 	Node *iter1 = set1->head;
 	Node *iter2 = set2->head;
-	while ((iter1 != NULL) && (iter2 != NULL)) {
+	while ((iter1 != nullptr) && (iter2 != nullptr)) {
 		if (iter1->val != iter2->val)
 			return false;
 		iter1 = iter1->next;
@@ -145,16 +155,77 @@ bool setEqual(Set *set1, Set *set2) {
 	return true;
 }
 
-// Clears contents of set
-void setClear(Set *set) {
-	if (set->size == 0)
-		return;
-
-	for (Node *iter = set->head; iter != NULL; iter = set->head) {
-		set->head = set->head->next;
-		delete iter;
+// Returns true is value exists in the set. False otherwise
+bool setExists(Set *set, int value) {
+	for (Node *iter = set->head; iter != nullptr; iter = iter->next) {
+		if (value == iter->val)
+			return true;
 	}
 
-	set->head = set->tail = NULL;
+	return false;
+}
+
+// Initializes pointers to null and values to 0
+void setInit(Set *set) {
+	set->head = set->tail = nullptr;
 	set->size = 0;
+}
+
+// Prints out the set contents
+void setPrint(Set *set) {
+	for (Node *iter = set->head; iter != nullptr; iter = iter->next) {
+		cout << (char)iter->val << " ";
+	}
+}
+
+// Initializes the contents of all the sets according to the project specification.
+void initializeSets(Set in[], Set out[], Set def[], Set use[], Set successor[]) {
+
+	// Initialize all sets to empty
+	for (int b = 0; b < SET_MAX; b++) {
+		setInit(&in[b]);
+		setInit(&out[b]);
+		setInit(&def[b]);
+		setInit(&use[b]);
+		setInit(&successor[b]);
+	}
+
+	// Block 1
+	setAdd(&def[0], (int) 'a');
+	setAdd(&def[0], (int) 'b');
+	setAdd(&successor[0], 1);
+
+	// Block 2
+	setAdd(&use[1], (int) 'a');
+	setAdd(&use[1], (int) 'b');
+	setAdd(&def[1], (int) 'c');
+	setAdd(&def[1], (int) 'd');
+	setAdd(&successor[1], 2);
+	setAdd(&successor[1], 4);
+
+	// Block 3
+	setAdd(&use[2], (int) 'b');
+	setAdd(&use[2], (int) 'd');
+	setAdd(&successor[2], 3);
+	setAdd(&successor[2], 4);
+
+	// Block 4
+	setAdd(&use[3], (int) 'a');
+	setAdd(&use[3], (int) 'b');
+	setAdd(&use[3], (int) 'e');
+	setAdd(&def[3], (int) 'd');
+	setAdd(&successor[3], 2);
+
+	// Block 5
+	setAdd(&use[4], (int) 'a');
+	setAdd(&use[4], (int) 'b');
+	setAdd(&use[4], (int) 'c');
+	setAdd(&def[4], (int) 'e');
+	setAdd(&successor[4], 1);
+	setAdd(&successor[4], 5);
+
+	// Block 6
+	setAdd(&use[5], (int) 'b');
+	setAdd(&use[5], (int) 'd');
+	setAdd(&def[5], (int) 'a');
 }
