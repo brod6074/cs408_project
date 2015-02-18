@@ -27,7 +27,7 @@ int main() {
     while (change) {
 		change  = false;
         for (int b = 0; b < SET_MAX; b++) {
-			cout << "\nSET " << (b + 1) << " IN (before): ";
+			cout << "\n\nSET " << (b + 1) << " IN (before): ";
 			in[b].dump();
 			cout << "\nSET " << (b + 1) << " OUT (before): ";
 			out[b].dump();
@@ -61,9 +61,10 @@ int main() {
 			cout << "\nSET " << (b + 1) << " OUT (after): ";
 			out[b].dump();
         }
-		cout << "\n=======================================";
+		cout << "\n==================================";
     } 
 	
+	cout << endl;
     return 0;
 }
 

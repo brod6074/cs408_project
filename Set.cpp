@@ -1,3 +1,9 @@
+// Programmer:	Roberto Rodriguez
+// Assignment:	Individual Project
+// Class:		CS 408, W15
+//
+// VERSION 2
+
 #include "Set.h"
 #include <iostream>
 using namespace std;

@@ -46,7 +46,7 @@ int main() {
 		change = false;
 		
 		for (int b = 0; b < SET_MAX; b++) {
-			cout << "\nSET " << (b + 1) << " IN (before): ";
+			cout << "\n\nSET " << (b + 1) << " IN (before): ";
 			setPrint(&in[b]);
 			cout << "\nSET " << (b + 1) << " OUT (before): ";
 			setPrint(&out[b]);
@@ -88,7 +88,7 @@ int main() {
 			cout << "\nSET " << (b + 1) << " OUT (after): ";
 			setPrint(&out[b]);
 		}
-		cout << "\n=======================================";
+		cout << "\n==================================";
 	}
 
 	// Deallocate memory before exiting

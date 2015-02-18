@@ -1,3 +1,9 @@
+// Programmer:	Roberto Rodriguez
+// Assignment:	Individual Project
+// Class:		CS 408, W15
+//
+// VERSION 2
+
 #ifndef  SET_H
 #define  SET_H
 
@@ -10,10 +16,7 @@ PURPOSE: The Set class provides basic set functionality such as adding/removing
          values from a set.
 ===============================================================================
 */
-class Set
-{
-friend void initializeSets(Set in[], Set out[], Set def[], Set use[], Set successor[]);
-
+class Set {
 public:
          Set();
          Set(const Set& rhs);
