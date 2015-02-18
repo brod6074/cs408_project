@@ -25,11 +25,45 @@ int main() {
 
     bool change = true;
     while (change) {
+		change  = false;
         for (int b = 0; b < SET_MAX; b++) {
+			cout << "\nSET " << (b + 1) << " IN (before): ";
+			in[b].dump();
+			cout << "\nSET " << (b + 1) << " OUT (before): ";
+			out[b].dump();
 
+			// old = in[b]
+			Set old(in[b]);
+
+			// out[b] = U in[p] for each successor p of b
+			Set unionSet;
+			for (int succ = 0; succ < successor[b].size(); succ++) {
+				int p;
+				successor[b].get(succ, p);
+				unite(unionSet, in[p], unionSet);
+			}
+			swap(out[b], unionSet);
+
+			// in[b] = use[b] U (out[b] - def[b])
+			Set dummySet1(use[b]);
+			Set dummySet2;
+			subtract(out[b], def[b], dummySet2);
+			unite(dummySet1, dummySet2, dummySet1);
+			swap(in[b], dummySet1);
+
+			// if (in[b] != old)
+			//		change = true
+			if (!(in[b] == old))
+				change = true;
+
+			cout << "\nSET " << (b + 1) << " IN (after): ";
+			in[b].dump();
+			cout << "\nSET " << (b + 1) << " OUT (after): ";
+			out[b].dump();
         }
-    }
-
+		cout << "\n=======================================";
+    } 
+	
     return 0;
 }
 
