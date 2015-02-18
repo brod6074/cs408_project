@@ -165,15 +165,12 @@ FUNCTION: DUMP
 ===============================================================================
 */
 void Set::dump() const {
-   cout << "SET_SIZE = " << m_size << endl;
-   cout << "HEAD" << endl;
+
    Node* curr = m_head;
-   while (curr != nullptr)
-   {
-      cout << " |" << endl << " " << curr->item << endl;
+   while (curr != nullptr) {
+      cout << (char) curr->item << " ";
       curr = curr->next;
    }
-   cout << " | " << endl << "TAIL" << endl;
 }
 
 /*
@@ -188,6 +185,29 @@ Set& Set::operator=(const Set& rhs) {
 
    clear();
    init(rhs);
+}
+
+/*
+===============================================================================
+FUNCTION: OPERATOR==
+===============================================================================
+*/
+bool  Set::operator==(const Set& rhs) const {
+	if (this->m_size != rhs.m_size)
+		return false;
+
+	Node *thisIter = nullptr;
+	Node *rhsIter = nullptr;
+
+	for (thisIter = this->m_head, rhsIter = rhs.m_head; 
+		(thisIter != nullptr) && (rhsIter != nullptr);
+		thisIter = thisIter->next, rhsIter = rhsIter->next) {
+
+			if (thisIter->item != rhsIter->item)
+				return false;
+	}
+
+	return true;
 }
 
 /*

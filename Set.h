@@ -1,7 +1,7 @@
 #ifndef  SET_H
 #define  SET_H
 
-typedef unsigned long ItemType;
+typedef int ItemType;
 
 /*
 ===============================================================================
@@ -27,6 +27,7 @@ public:
    void  swap(Set& other);
    void  dump() const;
    Set&  operator=(const Set& rhs);
+   bool  operator==(const Set& rhs) const;
 
 private:
    struct Node {
