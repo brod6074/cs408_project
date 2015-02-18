@@ -191,41 +191,41 @@ void initializeSets(Set in[], Set out[], Set def[], Set use[], Set successor[]) 
 	}
 
 	// Block 1
-	setAdd(&def[0], (int) 'a');
-	setAdd(&def[0], (int) 'b');
+	setAdd(&def[0], 'a');
+	setAdd(&def[0], 'b');
 	setAdd(&successor[0], 1);
 
 	// Block 2
-	setAdd(&use[1], (int) 'a');
-	setAdd(&use[1], (int) 'b');
-	setAdd(&def[1], (int) 'c');
-	setAdd(&def[1], (int) 'd');
+	setAdd(&use[1], 'a');
+	setAdd(&use[1], 'b');
+	setAdd(&def[1], 'c');
+	setAdd(&def[1], 'd');
 	setAdd(&successor[1], 2);
 	setAdd(&successor[1], 4);
 
 	// Block 3
-	setAdd(&use[2], (int) 'b');
-	setAdd(&use[2], (int) 'd');
+	setAdd(&use[2], 'b');
+	setAdd(&use[2], 'd');
 	setAdd(&successor[2], 3);
 	setAdd(&successor[2], 4);
 
 	// Block 4
-	setAdd(&use[3], (int) 'a');
-	setAdd(&use[3], (int) 'b');
-	setAdd(&use[3], (int) 'e');
-	setAdd(&def[3], (int) 'd');
+	setAdd(&use[3], 'a');
+	setAdd(&use[3], 'b');
+	setAdd(&use[3], 'e');
+	setAdd(&def[3], 'd');
 	setAdd(&successor[3], 2);
 
 	// Block 5
-	setAdd(&use[4], (int) 'a');
-	setAdd(&use[4], (int) 'b');
-	setAdd(&use[4], (int) 'c');
-	setAdd(&def[4], (int) 'e');
+	setAdd(&use[4], 'a');
+	setAdd(&use[4], 'b');
+	setAdd(&use[4], 'c');
+	setAdd(&def[4], 'e');
 	setAdd(&successor[4], 1);
 	setAdd(&successor[4], 5);
 
 	// Block 6
-	setAdd(&use[5], (int) 'b');
-	setAdd(&use[5], (int) 'd');
-	setAdd(&def[5], (int) 'a');
+	setAdd(&use[5], 'b');
+	setAdd(&use[5], 'd');
+	setAdd(&def[5], 'a');
 }
